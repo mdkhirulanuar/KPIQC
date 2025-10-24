@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QA/QC Toolkit</title>
+  <link rel="stylesheet" href="assets/css/global.css">
+  <!-- External libraries for export -->
+  <script src="https://cdn.jsdelivr.net/npm/jspdf"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas"></script>
+</head>
+<body>
+  <header>
+    <h1>QA/QC Toolkit</h1>
+    <select id="module-select"></select>
+    <span id="lang-toggle">
+      <button id="lang-en">EN</button>
+      <button id="lang-ms">MS</button>
+    </span>
+  </header>
+  <main id="main">
+    <!-- F26 Incoming Material Inspection -->
+    <section id="F26" class="module hidden">
+      <h2>Incoming Material Control (F26)</h2>
+      <div class="grid two">
+        <label>PO Number<input id="f26-po"></label>
+        <label>DO/Invoice Number<input id="f26-do"></label>
+        <label>Part Number<select id="f26-part"></select></label>
+        <label>Description<input id="f26-desc"></label>
+        <label># Boxes<input id="f26-boxes" inputmode="numeric"></label>
+        <label>Pcs per Box<input id="f26-pcs" inputmode="numeric"></label>
+        <label>Lot Size (auto)<input id="f26-lot" readonly></label>
+        <label>AQL
+          <select id="f26-aql">
+            <option value="1.0%">1.0%</option>
+            <option value="2.5%" selected>2.5%</option>
+            <option value="4.0%">4.0%</option>
+          </select>
+        </label>
+        <label>Code Letter<input id="f26-code" readonly></label>
+        <label>Sample Size<input id="f26-n" readonly></label>
+        <label>Ac<input id="f26-ac" readonly></label>
+        <label>Re<input id="f26-re" readonly></label>
+      </div>
+      <small id="f26-tip"></small>
+      <fieldset>
+        <legend>Document Verification</legend>
+        <label><input type="checkbox" id="f26-doc-coa">COA / MSDS</label>
+        <label><input type="checkbox" id="f26-doc-plate">Color Plate</label>
+        <label><input type="checkbox" id="f26-doc-spec">Specification Sheet</label>
+      </fieldset>
+      <fieldset>
+        <legend>Physical Check</legend>
+        <label><input type="checkbox" id="f26-packaging">Packaging OK</label>
+        <label><input type="checkbox" id="f26-appearance">Appearance OK</label>
+        <label><input type="checkbox" id="f26-dimension">Dimension OK</label>
+      </fieldset>
+      <fieldset>
+        <legend>Disposition</legend>
+        <label><input type="radio" name="f26-disp" value="Accepted">Accepted</label>
+        <label><input type="radio" name="f26-disp" value="Rejected">Rejected</label>
+        <label><input type="radio" name="f26-disp" value="Hold">Hold</label>
+      </fieldset>
+      <label>Remarks<textarea id="f26-remarks"></textarea></label>
+      <div class="actions">
+        <button id="f26-save">Save</button>
+        <button id="f26-export-pdf">Export PDF</button>
+        <button id="f26-export-csv">Export CSV</button>
+      </div>
+    </section>
+    <!-- F25 AQL Sampling Record -->
+    <section id="F25" class="module hidden">
+      <h2>AQL Sampling Record (F25)</h2>
+      <div class="grid two">
+        <label>Part Number<select id="f25-part"></select></label>
+        <label>Description<input id="f25-desc"></label>
+        <label># Boxes<input id="f25-boxes" inputmode="numeric"></label>
+        <label>Pcs per Box<input id="f25-pcsPerBox" inputmode="numeric"></label>
+        <label>Lot Size (pcs)<input id="f25-lot" readonly></label>
+        <label>AQL
+          <select id="f25-aql">
+            <option value="1.0%">1.0%</option>
+            <option value="2.5%" selected>2.5%</option>
+            <option value="4.0%">4.0%</option>
+          </select>
+        </label>
+        <label>Code Letter<input id="f25-code" readonly></label>
+        <label>Sample Size<input id="f25-n" readonly></label>
+        <label>Ac<input id="f25-ac" readonly></label>
+        <label>Re<input id="f25-re" readonly></label>
+        <label>Defects Found<input id="f25-found" inputmode="numeric" value="0"></label>
+        <label>Decision<input id="f25-verdict" readonly></label>
+      </div>
+      <small id="f25-tip"></small>
+      <div class="actions">
+        <button id="f25-save">Save</button>
+        <button id="f25-export-pdf">Export PDF</button>
+        <button id="f25-export-csv">Export CSV</button>
+      </div>
+    </section>
+    <!-- F27 First Article Inspection -->
+    <section id="F27" class="module hidden">
+      <h2>First Article Inspection (F27)</h2>
+      <div class="grid two">
+        <label>Part Number<select id="f27-part"></select></label>
+        <label>Revision<input id="f27-rev"></label>
+        <label>Machine<select id="f27-machine"></select></label>
+        <label>Cavity<input id="f27-cavity"></label>
+      </div>
+      <h3>Sample Checks (5 samples)</h3>
+      <table id="f27-table">
+        <thead>
+          <tr><th>Sample</th><th>Appearance OK</th><th>Dimension OK</th><th>Functional OK</th><th>Remarks</th></tr>
+        </thead>
+        <tbody>
+          <!-- rows generated by JS -->
+        </tbody>
+      </table>
+      <label>Disposition
+        <select id="f27-disp">
+          <option>Accepted</option>
+          <option>Rejected</option>
+          <option>Hold</option>
+        </select>
+      </label>
+      <label>Remarks<textarea id="f27-remarks"></textarea></label>
+      <div class="actions">
+        <button id="f27-save">Save</button>
+        <button id="f27-export-pdf">Export PDF</button>
+        <button id="f27-export-csv">Export CSV</button>
+      </div>
+    </section>
+    <!-- F17 In-Process Inspection -->
+    <section id="F17" class="module hidden">
+      <h2>In-Process Inspection Log (F17)</h2>
+      <div class="grid two">
+        <label>Date<input id="f17-date" type="date"></label>
+        <label>Shift
+          <select id="f17-shift">
+            <option>Day</option>
+            <option>Night</option>
+          </select>
+        </label>
+        <label>Part Number<select id="f17-part"></select></label>
+        <label>Description<input id="f17-desc"></label>
+      </div>
+      <h3>Hourly Checks</h3>
+      <table id="f17-table">
+        <thead>
+          <tr><th>Time</th><th>Defects (count)</th><th>Dimension OK</th><th>Remarks</th></tr>
+        </thead>
+        <tbody>
+          <!-- rows via JS -->
+        </tbody>
+      </table>
+      <label>Disposition
+        <select id="f17-disp">
+          <option>Continue</option>
+          <option>Hold</option>
+          <option>Stop</option>
+        </select>
+      </label>
+      <label>Remarks<textarea id="f17-remarks"></textarea></label>
+      <div class="actions">
+        <button id="f17-save">Save</button>
+        <button id="f17-export-pdf">Export PDF</button>
+        <button id="f17-export-csv">Export CSV</button>
+      </div>
+    </section>
+    <!-- F19 Printing Quality Checklist -->
+    <section id="F19" class="module hidden">
+      <h2>Printing Quality Inspection (F19)</h2>
+      <div class="grid two">
+        <label>Date<input id="f19-date" type="date"></label>
+        <label>Shift
+          <select id="f19-shift">
+            <option>Day</option>
+            <option>Night</option>
+          </select>
+        </label>
+        <label>Part Number<select id="f19-part"></select></label>
+        <label>Description<input id="f19-desc"></label>
+      </div>
+      <h3>Printing Checks by Hour</h3>
+      <table id="f19-table">
+        <thead>
+          <tr><th>Time</th><th>Appearance OK</th><th>Color OK</th><th>Registration OK</th><th>Remarks</th></tr>
+        </thead>
+        <tbody>
+          <!-- rows via JS -->
+        </tbody>
+      </table>
+      <label>Disposition
+        <select id="f19-disp">
+          <option>Continue</option>
+          <option>Rework</option>
+          <option>Hold</option>
+        </select>
+      </label>
+      <label>Remarks<textarea id="f19-remarks"></textarea></label>
+      <div class="actions">
+        <button id="f19-save">Save</button>
+        <button id="f19-export-pdf">Export PDF</button>
+        <button id="f19-export-csv">Export CSV</button>
+      </div>
+    </section>
+    <!-- F18 Final Outgoing Inspection -->
+    <section id="F18" class="module hidden">
+      <h2>Final Outgoing & Transfer (F18)</h2>
+      <div class="grid two">
+        <label>Part Number<select id="f18-part"></select></label>
+        <label>Description<input id="f18-desc"></label>
+        <label>PO/Order No<input id="f18-po"></label>
+        <label>Lot/Batch<input id="f18-lot"></label>
+        <label># Boxes<input id="f18-boxes" inputmode="numeric"></label>
+        <label>Pcs per Box<input id="f18-pcs" inputmode="numeric"></label>
+        <label>Lot Size (auto)<input id="f18-lotSize" readonly></label>
+        <label>AQL
+          <select id="f18-aql">
+            <option>1.0%</option>
+            <option selected>2.5%</option>
+            <option>4.0%</option>
+          </select>
+        </label>
+        <label>Code Letter<input id="f18-code" readonly></label>
+        <label>Sample Size<input id="f18-n" readonly></label>
+        <label>Ac<input id="f18-ac" readonly></label>
+        <label>Re<input id="f18-re" readonly></label>
+      </div>
+      <small id="f18-tip"></small>
+      <h3>Visual & Dimensional</h3>
+      <table id="f18-checks">
+        <thead>
+          <tr><th>Checkpoint</th><th>Result</th><th>Remarks</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Appearance</td>
+            <td><select class="f18-res"><option>OK</option><option>NG</option></select></td>
+            <td><input class="f18-remark"></td></tr>
+          <tr><td>Dimension</td>
+            <td><select class="f18-res"><option>OK</option><option>NG</option></select></td>
+            <td><input class="f18-remark"></td></tr>
+        </tbody>
+      </table>
+      <fieldset>
+        <legend>Functional Test</legend>
+        <label><input type="radio" name="f18-func" value="Pass">Pass</label>
+        <label><input type="radio" name="f18-func" value="Fail">Fail</label>
+        <label><input type="radio" name="f18-func" value="N/A">N/A</label>
+      </fieldset>
+      <fieldset>
+        <legend>Disposition</legend>
+        <label><input type="radio" name="f18-disp" value="Accepted">Accepted</label>
+        <label><input type="radio" name="f18-disp" value="Rejected">Rejected</label>
+        <label><input type="radio" name="f18-disp" value="Hold">Hold</label>
+        <label><input type="radio" name="f18-disp" value="Rework">Rework</label>
+      </fieldset>
+      <label>Remarks<textarea id="f18-remarks"></textarea></label>
+      <div class="actions">
+        <button id="f18-save">Save</button>
+        <button id="f18-export-pdf">Export PDF</button>
+        <button id="f18-export-csv">Export CSV</button>
+      </div>
+    </section>
+    <!-- F23 Defect Record Log -->
+    <section id="F23" class="module hidden">
+      <h2>Defect Record Log (F23)</h2>
+      <div class="grid two">
+        <label>Date<input id="f23-date" type="date"></label>
+        <label>Shift
+          <select id="f23-shift">
+            <option>Day</option>
+            <option>Night</option>
+          </select>
+        </label>
+        <label>Part Number<select id="f23-part"></select></label>
+        <label>Description<input id="f23-desc"></label>
+      </div>
+      <h3>Defect Entries</h3>
+      <table id="f23-table">
+        <thead>
+          <tr><th>Defect Type</th><th>Qty</th><th>Disposition</th><th>Remarks</th><th></th></tr>
+        </thead>
+        <tbody>
+          <!-- rows added via JS -->
+        </tbody>
+      </table>
+      <button id="f23-add-row">Add Defect</button>
+      <label>Disposition overall
+        <select id="f23-overall">
+          <option>Recycle</option>
+          <option>Dispose</option>
+          <option>Rework</option>
+        </select>
+      </label>
+      <label>Remarks<textarea id="f23-remarks"></textarea></label>
+      <div class="actions">
+        <button id="f23-save">Save</button>
+        <button id="f23-export-pdf">Export PDF</button>
+        <button id="f23-export-csv">Export CSV</button>
+      </div>
+    </section>
+  </main>
+  <script type="module" src="assets/js/app.js"></script>
+</body>
+</html>

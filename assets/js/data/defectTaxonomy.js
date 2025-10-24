@@ -1,0 +1,2 @@
+export const CommonDefects = ['Scratches','Short Mould','Paint Peel','Weld Line','Bubble','Warpage','Flashing','Dirt','Silver Streak','Brittle','Sink Mark','Flow Mark','Ejector Mark','Crack','Poor Gloss','Black Dot'];
+export const PrintingDefects = ['Surface Cleanliness','Single Print','Color Accuracy','Ink Clarity','Text Legibility','Print Position','Alignment','Print Coverage','Adhesion','Drying/Curing'];
