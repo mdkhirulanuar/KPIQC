@@ -31,7 +31,7 @@ header select, header button {
 main {
   padding: 10px;
 }
-.module {
+.hidden {
   display: none;
   background: #fff;
   padding: 15px;
